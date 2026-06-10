@@ -1,4 +1,4 @@
-package router
+package routes
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	"github.com/krJay1/go-helpdesk/internal/repository"
 )
 
-func InitializeRouter(route *mux.Router, db *sql.DB) {
+func InitializeRoutes(route *mux.Router, db *sql.DB) {
 
 	userRepo := &repository.UserRepository{DB: db}
 

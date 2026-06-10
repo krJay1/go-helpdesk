@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/krJay1/go-helpdesk/internal/router"
+	"github.com/krJay1/go-helpdesk/internal/routes"
 	"github.com/krJay1/go-helpdesk/internal/storage"
 )
 
@@ -32,7 +32,7 @@ func main() {
 
 	root := mux.NewRouter()
 	root.HandleFunc("/", HomeHandler)
-	router.InitializeRouter(root, storage.DB)
+	routes.InitializeRoutes(root, storage.DB)
 
 	addr := ":8088"
 
