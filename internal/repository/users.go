@@ -25,7 +25,7 @@ func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 	return id, err
 }
 
-func (r *UserRepository) GetUser(id int) (*models.User, error) {
+func (r *UserRepository) GetUser(id int64) (*models.User, error) {
 	user := &models.User{}
 
 	err := r.DB.QueryRow(
