@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +10,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/krJay1/go-helpdesk/internal/router"
+	"github.com/krJay1/go-helpdesk/internal/config"
+	"github.com/krJay1/go-helpdesk/internal/handlers"
+	"github.com/krJay1/go-helpdesk/internal/routes"
 	"github.com/krJay1/go-helpdesk/internal/storage"
 )
 
@@ -21,22 +22,23 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Hello World")
+	cfg := config.Load()
 
-	connectionStr := "host=localhost dbname=go-db user=postgres password=12345 connect_timeout=5"
-	err := storage.InitDB(connectionStr)
+	db, err := storage.InitDB(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer storage.DB.Close()
+	defer db.Close()
 
 	root := mux.NewRouter()
 	root.HandleFunc("/", HomeHandler)
-	router.InitializeRouter(root, storage.DB)
+	root.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
+
+	routes.InitializeUserRoutes(root, db)
 
 	addr := ":8088"
 
-	log.Println("Server is starting on port :8088")
+	log.Println("Server is starting...")
 	server := http.Server{
 		Addr:    addr,
 		Handler: root,
@@ -47,6 +49,8 @@ func main() {
 			log.Fatalf("Failed to start server: %v", err)
 		}
 	}()
+
+	log.Println("✅ Server is running on http://localhost:8088")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
