@@ -8,7 +8,7 @@ import (
 	"github.com/krJay1/go-helpdesk/internal/repository"
 )
 
-func InitializeRoutes(route *mux.Router, db *sql.DB) {
+func InitializeUserRoutes(route *mux.Router, db *sql.DB) {
 
 	userRepo := &repository.UserRepository{DB: db}
 
