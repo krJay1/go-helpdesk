@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/krJay1/go-helpdesk/internal/router"
 	"github.com/krJay1/go-helpdesk/internal/storage"
 )
 
@@ -22,7 +23,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println("Hello World")
 
-	connectionStr := "host=localhost dbname=go-db connect_timeout=5"
+	connectionStr := "host=localhost dbname=go-db user=postgres password=12345 connect_timeout=5"
 	err := storage.InitDB(connectionStr)
 	if err != nil {
 		log.Fatal(err)
@@ -31,6 +32,7 @@ func main() {
 
 	root := mux.NewRouter()
 	root.HandleFunc("/", HomeHandler)
+	router.InitializeRouter(root, storage.DB)
 
 	addr := ":8088"
 
