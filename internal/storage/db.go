@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/krJay1/go-helpdesk/internal/config"
-	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
@@ -21,14 +21,14 @@ func InitDB(cfg *config.Config) (*sql.DB, error) {
 	)
 	fmt.Println("ConnectionString:", connStr)
 
-	db, err := sql.Open("postgres", connStr)
+	DB, err := sql.Open("pgx", connStr)
 	if err != nil {
 		return nil, err
 	}
-	if err := db.Ping(); err != nil {
+	if err := DB.Ping(); err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	return DB, nil
 
 }
