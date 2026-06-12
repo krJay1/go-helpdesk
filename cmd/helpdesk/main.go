@@ -30,7 +30,7 @@ func main() {
 	}
 	defer db.Close()
 
-	err = storage.MigrateDb()
+	err = storage.MigrateDb(cfg)
 
 	if err != nil {
 		log.Fatal(err)

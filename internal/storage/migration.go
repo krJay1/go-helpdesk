@@ -5,14 +5,13 @@ import (
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/krJay1/go-helpdesk/internal/config"
 )
 
 // For golang-migrate
-func MigrationURL(cfg *config.Config) string {
+func dbURL(cfg *config.Config) string {
 	return fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.DBUser,
@@ -22,15 +21,23 @@ func MigrationURL(cfg *config.Config) string {
 		cfg.DBName,
 	)
 }
-func MigrateDb() error {
-
-	driver, err := postgres.WithInstance(DB, &postgres.Config{})
-
-	m, err := migrate.NewWithDatabaseInstance(
+func MigrateDb(cfg *config.Config) error {
+	m, err := migrate.New(
 		"file://migrations",
-		"postgres",
-		driver,
+		dbURL(cfg),
 	)
+
+	defer func() {
+		sourceErr, dbErr := m.Close()
+
+		if sourceErr != nil {
+			log.Printf("migration source close error: %v", sourceErr)
+		}
+
+		if dbErr != nil {
+			log.Printf("migration db close error: %v", dbErr)
+		}
+	}()
 
 	if err != nil {
 		return err
