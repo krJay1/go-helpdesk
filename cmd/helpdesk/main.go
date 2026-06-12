@@ -30,6 +30,12 @@ func main() {
 	}
 	defer db.Close()
 
+	err = storage.MigrateDb()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	root := mux.NewRouter()
 	root.HandleFunc("/", HomeHandler)
 	root.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
