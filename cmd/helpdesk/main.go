@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/krJay1/go-helpdesk/internal/config"
 	"github.com/krJay1/go-helpdesk/internal/handlers"
+	"github.com/krJay1/go-helpdesk/internal/middleware"
 	"github.com/krJay1/go-helpdesk/internal/routes"
 	"github.com/krJay1/go-helpdesk/internal/storage"
 )
@@ -37,6 +38,8 @@ func main() {
 	}
 
 	root := mux.NewRouter()
+	root.Use(middleware.LoggerMiddleWare)
+
 	root.HandleFunc("/", HomeHandler)
 	root.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
 
