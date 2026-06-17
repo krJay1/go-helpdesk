@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/krJay1/go-helpdesk/internal/models"
 	"github.com/krJay1/go-helpdesk/internal/repository"
+	"github.com/krJay1/go-helpdesk/internal/utils"
 )
 
 type UserHandler struct {
@@ -38,6 +39,7 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	var response utils.ApiResponse
 	idstr := mux.Vars(r)["id"]
 
 	id, err := strconv.ParseInt(idstr, 10, 64)
@@ -47,8 +49,12 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.Repo.GetUser(id)
 
-	w.Header().Set("Content-Type", "application/json")
+	response.Success = true
+	response.Data = user
+	response.Error = err
+	response.Status = http.StatusOK
+	response.Message = "User fetched successfully"
 
-	json.NewEncoder(w).Encode(user)
+	response.Send(w)
 
 }
