@@ -42,8 +42,9 @@ func main() {
 
 	root.HandleFunc("/", HomeHandler)
 	root.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
+	r := root.PathPrefix("/api/v1").Subrouter()
 
-	routes.InitializeUserRoutes(root, db)
+	routes.InitializeUserRoutes(r, db)
 
 	addr := ":8088"
 

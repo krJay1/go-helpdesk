@@ -26,6 +26,9 @@ func MigrateDb(cfg *config.Config) error {
 		"file://migrations",
 		dbURL(cfg),
 	)
+	if err != nil {
+		return err
+	}
 
 	defer func() {
 		sourceErr, dbErr := m.Close()
@@ -38,10 +41,6 @@ func MigrateDb(cfg *config.Config) error {
 			log.Printf("migration db close error: %v", dbErr)
 		}
 	}()
-
-	if err != nil {
-		return err
-	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		return err

@@ -13,10 +13,11 @@ type UserRepository struct {
 func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 	var id int64
 	err := r.DB.QueryRow(
-		`INSERT INTO users(name, email) 
-		VALUES($1, $2)
+		`INSERT INTO users(first_name, last_name, email) 
+		VALUES($1, $2, $3)
 		RETURNING id`,
-		user.Name,
+		user.FirstName,
+		user.LastName,
 		user.Email,
 	).Scan(&id)
 	if err != nil {
@@ -29,12 +30,19 @@ func (r *UserRepository) GetUser(id int64) (*models.User, error) {
 	user := &models.User{}
 
 	err := r.DB.QueryRow(
-		"SELECT id, name, email FROM users WHERE id=$1",
+		"SELECT id, first_name, last_name, email, mobile_number, last_login, created_at, updated_at, is_active, password_hash FROM users WHERE id=$1",
 		id,
 	).Scan(
 		&user.ID,
-		&user.Name,
+		&user.FirstName,
+		&user.LastName,
 		&user.Email,
+		&user.MobileNumber,
+		&user.LastLogin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.IsActive,
+		&user.PasswordHash,
 	)
 
 	if err != nil {
