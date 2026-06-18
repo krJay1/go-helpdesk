@@ -39,7 +39,7 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
-	var response utils.ApiResponse
+	response := utils.NewApiResponse()
 	idstr := mux.Vars(r)["id"]
 
 	id, err := strconv.ParseInt(idstr, 10, 64)
@@ -48,6 +48,12 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := h.Repo.GetUser(id)
+	if err != nil {
+		response.Error = err
+		response.Message = "Failed to fetch user"
+		response.Send(w)
+		return
+	}
 
 	response.Success = true
 	response.Data = user
@@ -57,4 +63,9 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	response.Send(w)
 
+}
+
+func (h *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	response := utils.NewApiResponse()
+	response.Send(w)
 }

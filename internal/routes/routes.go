@@ -16,5 +16,6 @@ func InitializeUserRoutes(route *mux.Router, db *sql.DB) {
 
 	route.HandleFunc("/user", userHandler.CreateUserHandler).Methods("POST")
 	route.HandleFunc("/user/{id}", userHandler.GetUserHandler).Methods("GET")
+	route.HandleFunc("/users", userHandler.GetAllUsersHandler).Methods("GET")
 
 }
