@@ -13,6 +13,8 @@ type ApiResponse struct {
 	Error   interface{} `json:"error"`
 }
 
+// NewApiResponse creates a new ApiResponse with default values.
+// By default, Success is set to false and Status is set to http.StatusInternalServerError (500).
 func NewApiResponse() *ApiResponse {
 	return &ApiResponse{
 		Success: false,
