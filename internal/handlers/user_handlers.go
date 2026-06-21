@@ -12,11 +12,13 @@ import (
 	"github.com/krJay1/go-helpdesk/internal/utils"
 )
 
-type UserHandler struct {
-	Repo *repository.UserRepository
+func NewUserHandler(repository *repository.AppRepository) *ApiHandler {
+	return &ApiHandler{
+		Repo: repository,
+	}
 }
 
-func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ApiHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	res := utils.NewApiResponse()
 	var payload types.CreateUser
 
@@ -58,7 +60,7 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 	res.Send(w)
 }
 
-func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ApiHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	response := utils.NewApiResponse()
 	idstr := mux.Vars(r)["id"]
 
@@ -68,7 +70,7 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.Repo.GetUser(id)
+	user, err := h.Repo.GetUserByID(id)
 	if err != nil {
 		response.Error = err.Error()
 		response.Message = "Failed to fetch user"
@@ -86,7 +88,7 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ApiHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	res := utils.NewApiResponse()
 	users, err := h.Repo.GetUsers()
 	if err != nil {

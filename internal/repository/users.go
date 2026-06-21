@@ -1,16 +1,10 @@
 package repository
 
 import (
-	"database/sql"
-
 	"github.com/krJay1/go-helpdesk/internal/models"
 )
 
-type UserRepository struct {
-	DB *sql.DB
-}
-
-func (r *UserRepository) CreateUser(user models.User) (int64, error) {
+func (r *AppRepository) CreateUser(user models.User) (int64, error) {
 	var id int64
 	err := r.DB.QueryRow(
 		`INSERT INTO users(first_name, last_name, email, mobile_number, password_hash) 
@@ -28,12 +22,12 @@ func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 	return id, err
 }
 
-func (r *UserRepository) GetUser(id int64) (models.User, error) {
+func (r *AppRepository) getUser(query string, i interface{}) (models.User, error) {
 	var user models.User
 
 	err := r.DB.QueryRow(
-		"SELECT id, first_name, last_name, email, mobile_number, last_login, created_at, updated_at, is_active, password_hash FROM users WHERE id=$1;",
-		id,
+		query,
+		i,
 	).Scan(
 		&user.ID,
 		&user.FirstName,
@@ -53,7 +47,7 @@ func (r *UserRepository) GetUser(id int64) (models.User, error) {
 	return user, nil
 }
 
-func (r *UserRepository) GetUsers() ([]models.User, error) {
+func (r *AppRepository) GetUsers() ([]models.User, error) {
 	rows, err := r.DB.Query(
 		`SELECT 
 		id, 
@@ -98,4 +92,25 @@ func (r *UserRepository) GetUsers() ([]models.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (r *AppRepository) GetUserByEmail(email string) (models.User, error) {
+	query := "SELECT id, first_name, last_name, email, mobile_number, last_login, created_at, updated_at, is_active, password_hash FROM users WHERE email=$1;"
+
+	user, err := r.getUser(query, email)
+	if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
+func (r *AppRepository) GetUserByID(id int64) (models.User, error) {
+	var user models.User
+
+	query := "SELECT id, first_name, last_name, email, mobile_number, last_login, created_at, updated_at, is_active, password_hash FROM users WHERE id=$1;"
+	user, err := r.getUser(query, id)
+	if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
 }

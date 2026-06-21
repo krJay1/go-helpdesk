@@ -7,7 +7,7 @@ MIGRATIONS_DIR=migrations
 .PHONY: run build run-build test migration migrate-up
 
 run:
-	go run ./cmd/helpdesk
+	clear && go run ./cmd/helpdesk
 
 build:
 	go build -o ./bin/helpdesk ./cmd/helpdesk

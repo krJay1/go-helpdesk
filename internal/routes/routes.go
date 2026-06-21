@@ -10,12 +10,14 @@ import (
 
 func InitializeUserRoutes(route *mux.Router, db *sql.DB) {
 
-	userRepo := &repository.UserRepository{DB: db}
+	appRepo := &repository.AppRepository{DB: db}
 
-	userHandler := &handlers.UserHandler{Repo: userRepo}
+	apiHandler := handlers.NewUserHandler(appRepo)
 
-	route.HandleFunc("/user", userHandler.CreateUserHandler).Methods("POST")
-	route.HandleFunc("/user/{id}", userHandler.GetUserHandler).Methods("GET")
-	route.HandleFunc("/users", userHandler.GetAllUsersHandler).Methods("GET")
+	route.HandleFunc("/login", apiHandler.LoginHandler).Methods("POST")
+
+	route.HandleFunc("/user", apiHandler.CreateUserHandler).Methods("POST")
+	route.HandleFunc("/user/{id}", apiHandler.GetUserHandler).Methods("GET")
+	route.HandleFunc("/users", apiHandler.GetAllUsersHandler).Methods("GET")
 
 }
