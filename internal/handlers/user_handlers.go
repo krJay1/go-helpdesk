@@ -21,11 +21,13 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 	var payload types.CreateUser
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		res.Error = err.Error()
 		res.Send(w)
 		return
 	}
 	passwordHash, err := utils.HashPassword(payload.Password)
 	if err != nil {
+		res.Error = err.Error()
 		res.Send(w)
 		return
 	}
@@ -88,7 +90,7 @@ func (h *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request)
 	res := utils.NewApiResponse()
 	users, err := h.Repo.GetUsers()
 	if err != nil {
-		res.Error = err
+		res.Error = err.Error()
 		res.Send(w)
 		return
 	}
