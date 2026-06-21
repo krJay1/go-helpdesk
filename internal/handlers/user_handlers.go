@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/krJay1/go-helpdesk/internal/models"
 	"github.com/krJay1/go-helpdesk/internal/repository"
+	"github.com/krJay1/go-helpdesk/internal/types"
 	"github.com/krJay1/go-helpdesk/internal/utils"
 )
 
@@ -16,26 +17,43 @@ type UserHandler struct {
 }
 
 func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user models.User
+	res := utils.NewApiResponse()
+	var payload types.CreateUser
 
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		res.Send(w)
 		return
+	}
+	passwordHash, err := utils.HashPassword(payload.Password)
+	if err != nil {
+		res.Send(w)
+		return
+	}
+	user := models.User{
+		FirstName:    payload.FirstName,
+		LastName:     payload.LastName,
+		Email:        payload.Email,
+		PasswordHash: passwordHash,
+		MobileNumber: &payload.MobileNumber,
 	}
 
 	id, err := h.Repo.CreateUser(user)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		res.Error = err.Error()
+		res.Message = "Failed to create users acccount"
+		res.Send(w)
 		return
 	}
 
 	user.ID = id
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(user)
+	res.Status = http.StatusOK
+	res.Data = user
+	res.Success = true
+	res.Message = "User Created Successfully"
 
+	res.Send(w)
 }
 
 func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,12 +62,13 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.ParseInt(idstr, 10, 64)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Send(w)
+		return
 	}
 
 	user, err := h.Repo.GetUser(id)
 	if err != nil {
-		response.Error = err
+		response.Error = err.Error()
 		response.Message = "Failed to fetch user"
 		response.Send(w)
 		return
@@ -66,6 +85,18 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	response := utils.NewApiResponse()
-	response.Send(w)
+	res := utils.NewApiResponse()
+	users, err := h.Repo.GetUsers()
+	if err != nil {
+		res.Error = err
+		res.Send(w)
+		return
+	}
+
+	res.Success = true
+	res.Data = users
+	res.Message = "Records fetched successfully"
+	res.Status = http.StatusOK
+
+	res.Send(w)
 }
