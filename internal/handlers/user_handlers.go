@@ -17,13 +17,14 @@ type UserHandler struct {
 
 func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
+	ctx := r.Context()
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	id, err := h.Repo.CreateUser(user)
+	id, err := h.Repo.CreateUser(ctx, user)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -39,6 +40,7 @@ func (h *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	response := utils.NewApiResponse()
 	idstr := mux.Vars(r)["id"]
 
@@ -47,7 +49,7 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	user, err := h.Repo.GetUser(id)
+	user, err := h.Repo.GetUser(ctx, id)
 	if err != nil {
 		response.Error = err
 		response.Message = "Failed to fetch user"
@@ -66,6 +68,7 @@ func (h *UserHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	// ctx := r.Context()
 	response := utils.NewApiResponse()
 	response.Send(w)
 }

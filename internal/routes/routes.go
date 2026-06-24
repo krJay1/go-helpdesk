@@ -1,14 +1,13 @@
 package routes
 
 import (
-	"database/sql"
-
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/krJay1/go-helpdesk/internal/handlers"
 	"github.com/krJay1/go-helpdesk/internal/repository"
 )
 
-func InitializeUserRoutes(route *mux.Router, db *sql.DB) {
+func InitializeUserRoutes(route *mux.Router, db *pgxpool.Pool) {
 
 	userRepo := &repository.UserRepository{DB: db}
 

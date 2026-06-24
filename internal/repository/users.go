@@ -1,18 +1,20 @@
 package repository
 
 import (
-	"database/sql"
+	"context"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/krJay1/go-helpdesk/internal/models"
 )
 
 type UserRepository struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
-func (r *UserRepository) CreateUser(user models.User) (int64, error) {
+func (r *UserRepository) CreateUser(ctx context.Context, user models.User) (int64, error) {
 	var id int64
 	err := r.DB.QueryRow(
+		ctx,
 		`INSERT INTO users(first_name, last_name, email) 
 		VALUES($1, $2, $3)
 		RETURNING id`,
@@ -26,10 +28,11 @@ func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 	return id, err
 }
 
-func (r *UserRepository) GetUser(id int64) (*models.User, error) {
+func (r *UserRepository) GetUser(ctx context.Context, id int64) (*models.User, error) {
 	user := &models.User{}
 
 	err := r.DB.QueryRow(
+		ctx,
 		"SELECT id, first_name, last_name, email, mobile_number, last_login, created_at, updated_at, is_active, password_hash FROM users WHERE id=$1",
 		id,
 	).Scan(
