@@ -25,17 +25,15 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	cfg := config.Load()
 
+	if err := storage.MigrateDb(cfg); err != nil {
+		log.Fatal(err)
+	}
+
 	db, err := storage.InitDB(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-
-	err = storage.MigrateDb(cfg)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	root := mux.NewRouter()
 	root.Use(middleware.LoggerMiddleWare)
@@ -43,6 +41,7 @@ func main() {
 	root.HandleFunc("/", HomeHandler)
 	root.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
 	r := root.PathPrefix("/api/v1").Subrouter()
+	r.Use(middleware.TimeoutMiddleWare)
 
 	routes.InitializeUserRoutes(r, db)
 
