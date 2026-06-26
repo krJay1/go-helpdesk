@@ -21,6 +21,7 @@ func NewUserHandler(repository *repository.AppRepository) *ApiHandler {
 func (h *ApiHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	res := utils.NewApiResponse()
 	var payload types.CreateUser
+	ctx := r.Context()
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		res.Error = err.Error()
@@ -41,7 +42,7 @@ func (h *ApiHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		MobileNumber: &payload.MobileNumber,
 	}
 
-	id, err := h.Repo.CreateUser(user)
+	id, err := h.Repo.CreateUser(ctx, user)
 
 	if err != nil {
 		res.Error = err.Error()
@@ -61,6 +62,7 @@ func (h *ApiHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ApiHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	response := utils.NewApiResponse()
 	idstr := mux.Vars(r)["id"]
 
@@ -70,7 +72,7 @@ func (h *ApiHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.Repo.GetUserByID(id)
+	user, err := h.Repo.GetUserByID(ctx, id)
 	if err != nil {
 		response.Error = err.Error()
 		response.Message = "Failed to fetch user"
@@ -89,6 +91,7 @@ func (h *ApiHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ApiHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	// ctx := r.Context()
 	res := utils.NewApiResponse()
 	users, err := h.Repo.GetUsers()
 	if err != nil {
