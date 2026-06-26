@@ -91,9 +91,9 @@ func (h *ApiHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ApiHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	// ctx := r.Context()
+	ctx := r.Context()
 	res := utils.NewApiResponse()
-	users, err := h.Repo.GetUsers()
+	users, err := h.Repo.GetUsers(ctx)
 	if err != nil {
 		res.Error = err.Error()
 		res.Send(w)

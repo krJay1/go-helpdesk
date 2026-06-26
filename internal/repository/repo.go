@@ -1,7 +1,7 @@
 package repository
 
-import "database/sql"
+import "github.com/jackc/pgx/v5/pgxpool"
 
 type AppRepository struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }

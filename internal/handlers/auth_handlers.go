@@ -9,12 +9,13 @@ import (
 )
 
 func (h *ApiHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	res := utils.NewApiResponse()
 	var req types.LoginPayload
 
 	json.NewDecoder(r.Body).Decode(&req)
 
-	user, err := h.Repo.GetUserByEmail(req.Email)
+	user, err := h.Repo.GetUserByEmail(ctx, req.Email)
 	if err != nil {
 		res.Error = err.Error()
 		res.Send(w)
