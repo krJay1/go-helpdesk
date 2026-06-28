@@ -34,3 +34,10 @@ migrate-down:
 migrate-version:
 	migrate -path $(MIGRATIONS_DIR) -database "$(DB_URL)" version
 
+migrate-force:
+	@if [ -z "$(version)" ]; then \
+		echo "Usage: make migration version=2"; \
+		exit 1; \
+	fi
+	migrate -path $(MIGRATIONS_DIR) -database "$(DB_URL)" force $(version)
+

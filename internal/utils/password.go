@@ -2,13 +2,13 @@ package utils
 
 import "golang.org/x/crypto/bcrypt"
 
-func VerifyPassword(password, hashedPassword string) bool {
+func VerifyPassword(password, hashedPassword string) error {
 	err := bcrypt.CompareHashAndPassword(
 		[]byte(hashedPassword),
 		[]byte(password),
 	)
 
-	return err == nil
+	return err
 }
 
 func HashPassword(password string) (string, error) {

@@ -8,6 +8,7 @@ type LoginPayload struct {
 }
 
 type LoginResponse struct {
-	User        *models.User `json:"user"`
-	AccessToken string       `json:"accessToken"`
+	User         *models.User `json:"user"`
+	AccessToken  string       `json:"accessToken"`
+	RefreshToken string       `json:"refreshToken"`
 }
