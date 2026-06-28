@@ -17,7 +17,7 @@ type dbConfig struct {
 
 type Config struct {
 	*dbConfig
-	JWTSecret string
+	JWTSecret []byte
 }
 
 func Load() *Config {
@@ -34,6 +34,6 @@ func Load() *Config {
 			DBPassword: os.Getenv("DB_PASSWORD"),
 			DBName:     os.Getenv("DB_NAME"),
 		},
-		JWTSecret: os.Getenv("JWT_SECRET"),
+		JWTSecret: []byte(os.Getenv("JWT_SECRET")),
 	}
 }

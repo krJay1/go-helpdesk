@@ -32,7 +32,12 @@ func (h *ApiHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, err := h.getJWTtoken(&user)
-	res.Data = types.LoginResponse{User: &user, Token: token}
+	if err != nil {
+		res.Error = err.Error()
+		res.Send(w)
+		return
+	}
+	res.Data = types.LoginResponse{User: &user, AccessToken: token}
 	res.Status = http.StatusOK
 	res.Message = "Login successfull."
 
