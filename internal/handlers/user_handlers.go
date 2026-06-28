@@ -7,16 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/krJay1/go-helpdesk/internal/models"
-	"github.com/krJay1/go-helpdesk/internal/repository"
 	"github.com/krJay1/go-helpdesk/internal/types"
 	"github.com/krJay1/go-helpdesk/internal/utils"
 )
-
-func NewUserHandler(repository *repository.AppRepository) *ApiHandler {
-	return &ApiHandler{
-		Repo: repository,
-	}
-}
 
 func (h *ApiHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	res := utils.NewApiResponse()

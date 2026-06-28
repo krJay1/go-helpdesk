@@ -43,7 +43,7 @@ func main() {
 	r := root.PathPrefix("/api/v1").Subrouter()
 	r.Use(middleware.TimeoutMiddleWare)
 
-	routes.InitializeUserRoutes(r, db)
+	routes.InitializeUserRoutes(r, db, cfg)
 
 	addr := ":8088"
 
